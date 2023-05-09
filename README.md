@@ -1,5 +1,8 @@
 # watch_jut.su
 
+Works on windows 
+
+
 You need install python, selenium web driwer and chrome extention
 
 [python download](https://www.python.org/downloads/) 
