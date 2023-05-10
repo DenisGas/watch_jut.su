@@ -6,8 +6,14 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchWindowException
 import threading
 import os
-from config import chrome_data_dir, chrome_profile
+import configparser
 
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+chrome_data_dir = config['DEFAULT']['chrome_data_dir']
+
+chrome_profile = config['DEFAULT']['chrome_profile']
 
 options = Options()
 
