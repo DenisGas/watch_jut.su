@@ -17,6 +17,7 @@ chrome_profile = config['DEFAULT']['chrome_profile']
 
 options = Options()
 
+options.add_extension('./jut.su.Next-Series.crx')
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument('--disable-session-crashed-bubble')
 options.add_argument('unexpectedAlertBehaviour=ignore')
