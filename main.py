@@ -6,17 +6,42 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchWindowException
 import threading
 import os
-import configparser
 
-config = configparser.ConfigParser()
-config.read('config.ini')
 
-chrome_data_dir = config['DEFAULT']['chrome_data_dir']
+def find_chrome_user_data_dir():
+    if os.name == 'nt':  # Windows
+        app_data_path = os.getenv('LOCALAPPDATA')
+        chrome_user_data_dir = os.path.join(
+            app_data_path, 'Google', 'Chrome', 'User Data')
+        return chrome_user_data_dir
 
-chrome_profile = config['DEFAULT']['chrome_profile']
+    #  POSIX (macOS or Linux)
+    elif os.name == 'posix':
+        home_dir = os.path.expanduser('~')
+        chrome_user_data_dir = os.path.join(
+            home_dir, '.config', 'google-chrome', 'Default')
+        return chrome_user_data_dir
 
+    return None
+
+
+def close_chrome_instances():
+    if os.name == 'nt':  # Windows
+        command = 'taskkill /F /IM chrome.exe /T'
+    elif os.name == 'posix':  # macOS или Linux
+        command = 'pkill -f "chrome"'
+    else:
+        raise NotImplementedError(
+            "Sorry not work in you OS")
+
+    os.system(command)
+
+
+close_chrome_instances()
+
+chrome_data_dir = find_chrome_user_data_dir()
+chrome_profile = "PYTHON"
 options = Options()
-
 options.add_extension('./jut.su.Next-Series.crx')
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument('--disable-session-crashed-bubble')
@@ -24,16 +49,12 @@ options.add_argument('unexpectedAlertBehaviour=ignore')
 options.add_argument('--user-data-dir={}'.format(chrome_data_dir))
 options.add_argument('--profile-directory={}'.format(chrome_profile))
 options.add_experimental_option("excludeSwitches", ['enable-automation'])
-
 driver = webdriver.Chrome(options=options)
 driver.maximize_window()
 driver.get('https://jut.su/')
 
-
 temp_Url = driver.current_url
-
 previous_timer = None
-
 
 
 def check_current_url(f_driver=driver):
@@ -62,16 +83,14 @@ def get_element(selector):
         close_driver()
 
 
-
 def get_full_screen(btn):
-            btn.click()
+    btn.click()
 
 
 def close_driver():
     driver.quit()
     pid = (os.getpid())
     os.system(f"Taskkill /PID {pid} /F")
-
 
 
 def set_interval(interval, func):
