@@ -25,7 +25,7 @@ After installing python
 In cmd 
 
 ```cmd
-pip install selenium
+pip install -U selenium
 ```
 
 ## Use
